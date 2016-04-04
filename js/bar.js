@@ -45,7 +45,7 @@ var bars = function(data) {
         .enter()
         .append("rect")
         // .filter(function(d){
-        // 	return d.operator == "Air Canada";
+        //  return d.operator == "Air Canada";
         // })
         .attr("class", "bar")
         .attr("x", function(d, i) {
@@ -57,6 +57,9 @@ var bars = function(data) {
         .attr("width", 3)
         .attr("height", function(d) {
             return d.fatalities;
+        })
+        .attr("title", function(d) {
+            return d.operator + ", " + d.fatalities + " (" + d.year.getFullYear() + ")";
         });
 };
 
@@ -69,4 +72,27 @@ function init() {
         .attr("height", "100%")
         .attr("stroke", "#000")
         .attr("fill", "none");
-}
+};
+
+function visualizeNodeGraph(data) {
+    var svg = d3.select("#svg")
+        .attr("width", w)
+        .attr("height", h);
+    svg.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("class", "node")
+        .attr("cx", function(d) {
+            return Math.floor((Math.random() * w) + 1);
+        })
+        .attr("cy", function(d) {
+            return Math.floor((Math.random() * h) + 1);
+        })
+        .attr("r", function(d) {
+            return d.fatalities / 5;
+        })
+        .attr("title", function(d) {
+            return d.operator + ", " + d.fatalities + " (" + d.year.getFullYear() + ")";
+        });
+};
