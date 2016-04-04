@@ -1,5 +1,5 @@
 var w = 1500;
-var h = 800;
+var h = 900;
 var barPadding = 1;
 var bars = function(data) {
     // max = d3.max(data, function(d) {
@@ -37,24 +37,26 @@ var bars = function(data) {
     //     })
     //     .attr("width", 20)
     //     .attr("height", h);
-    var svg = d3.select("body")
-        .append("svg")
+    var svg = d3.select("#svg")
         .attr("width", w)
         .attr("height", h);
-
     svg.selectAll("rect")
         .data(data)
         .enter()
         .append("rect")
+        // .filter(function(d){
+        // 	return d.operator == "Air Canada";
+        // })
+        .attr("class", "bar")
         .attr("x", function(d, i) {
             return i * (w / data.length);
         })
         .attr("y", function(d) {
-            return h - (d.fatalities * 4);
+            return h - (d.fatalities);
         })
-        .attr("width", 5)
+        .attr("width", 3)
         .attr("height", function(d) {
-            return d.fatalities * 4;
+            return d.fatalities;
         });
 };
 
