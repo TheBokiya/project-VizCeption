@@ -2,6 +2,13 @@
     display: block;
 }
 
+svg#progress {
+    width: 350px;
+    height: 900px;
+    border: black;
+    border-width: 1px;
+}
+
 rect.bar {
     fill: #1abc9c;
     opacity: 0.5;

@@ -15,15 +15,16 @@
         <button id="bar-graph" value="Bar Graph">Bar Graph</button>
         <button id="node-graph" value="Node Graph">Node Graph</button>
     </div>
-    <svg id="svg"></svg>
+    <svg id="canvas"></svg>
+    <svg id="progress"></svg>
     <script type="text/javascript">
     d3.select("#bar-graph").on("click", function(d, i) {
-        d3.select("#svg").selectAll("*").remove();
+        d3.select("#canvas").selectAll("*").remove();
         dataset_csv();
     });
 
     d3.select("#node-graph").on("click", function(d, i){
-        d3.select("#svg").selectAll("*").remove();
+        d3.select("#canvas").selectAll("*").remove();
         nodeGraph();
     })
     // init();
