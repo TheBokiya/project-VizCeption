@@ -17,22 +17,10 @@ var drag = d3.behavior.drag()
         d3.select(this).attr("transform", function(d, i) {
             return "translate(" + [d.x, d.y] + ")";
         })
+    })
+    .on("dragend", function(d) {
+        savePos(d);
     });
-
-function dragstarted(d) {
-    d3.event.sourceEvent.stopPropagation();
-    d3.select(this).classed("dragging", true);
-};
-
-function dragged(d) {
-    console.log(d.x);
-    d3.select(this).attr("cx", d.x = d3.event.x)
-        .attr("cy", d.y = d3.event.y);
-};
-
-function dragended(d) {
-    d3.select(this).classed("dragging", false);
-};
 
 var bars = function(data) {
     // max = d3.max(data, function(d) {
@@ -107,12 +95,13 @@ function init() {
         .attr("stroke", "#000")
         .attr("fill", "none");
 };
+var savedGraph = [];
 
 function visualizeNodeGraph(data) {
     var svg = d3.select("#canvas")
         .attr("width", w)
         .attr("height", h);
-    svg.selectAll("circle")
+    node = svg.selectAll("circle")
         .data(data)
         .enter()
         .append("circle")
@@ -140,8 +129,24 @@ function visualizeNodeGraph(data) {
             return "translate(" + d.x + "," + d.y + ")";
         })
         .call(drag);
+
+    for (var i in node[0]) {
+        var tempNode = {
+            "x": node[0][i].getAttribute('cx'),
+            "y": node[0][i].getAttribute('cy'),
+            "r": node[0][i].getAttribute('r'),
+            "title": node[0][i].getAttribute("title")
+        };
+        savedGraph.push(tempNode);
+    };
+    window.localStorage.setItem("positions", JSON.stringify(savedGraph));
+    console.log(localStorage.getItem("positions"));
+    console.log(JSON.stringify(savedGraph));
 };
 
+function savePos(d) {
+    console.log(d.x + "," + d.y);
+};
 // function nodeConstructor(svg, data, x, y) {
 //     svg.selectAll("circle")
 //         .data(data)

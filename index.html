@@ -23,12 +23,13 @@
         dataset_csv();
     });
 
-    d3.select("#node-graph").on("click", function(d, i){
-        d3.select("#canvas").selectAll("*").remove();
-        nodeGraph();
-    })
-    // init();
+    d3.select("#node-graph").on("click", function(d, i) {
+            d3.select("#canvas").selectAll("*").remove();
+            nodeGraph();
+        })
+        // init();
     </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 </body>
 
 </html>
