@@ -1,63 +1,30 @@
-var w = 1500;
-var h = 900;
+var margin = { top: -5, right: -5, bottom: -5, left: -5 };
+var w = 1500 - margin.left - margin.right;
+var h = 900 - margin.top - margin.bottom;
 var barPadding = 1;
 
-// var drag = d3.behavior.drag()
-//     .origin(function(d){
-//         return d;
-//     })
-//     .on("dragstart", dragstarted)
-//     .on("drag", dragged)
-//     .on("dragend", dragended);
-
 var drag = d3.behavior.drag()
-    .on("drag", function(d, i) {
-        d.x += d3.event.dx
-        d.y += d3.event.dy
-        d3.select(this).attr("transform", function(d, i) {
-            return "translate(" + [d.x, d.y] + ")";
-        })
+    .origin(function(d) {
+        return d;
     })
-    .on("dragend", function(d) {
-        savePos(d);
-    });
+    .on("dragstart", dragstarted)
+    .on("drag", dragged)
+    .on("dragend", dragended);
+
+function dragstarted(d) {
+    d3.event.sourceEvent.stopPropagation();
+    d3.select(this).classed("dragging", true);
+}
+
+function dragged(d) {
+    d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+}
+
+function dragended(d) {
+    d3.select(this).classed("dragging", false);
+}
 
 var bars = function(data) {
-    // max = d3.max(data, function(d) {
-    //     return d.value;
-    // });
-
-    // y = d3.scale.linear()
-    //     .domain([0, max])
-    //     .range([0, h]);
-
-    // x = d3.scale.ordinal()
-    //     .domain(d3.range(data.length))
-    //     .rangeBands([0, w], .2);
-
-    // var vis = d3.select("#barchart");
-    // var bars = vis.selectAll("rect.bar")
-    //     .data(data)
-    //     .enter()
-    //     .append("svg:rect")
-    //     .attr("class", "bar")
-    //     .attr("fill", "#800")
-    //     .attr("stroke", "#800");
-
-    // // bars.exit()
-    // //     .remove();
-
-    // bars.attr("x", function(d, i) {
-    //         return i * (w / data.length);
-    //     })
-    //     .attr("y", function(d) {
-    //         return d * 4;
-    //     })
-    //     .attr("height", function(d, i) {
-    //         return d.fatalities;
-    //     })
-    //     .attr("width", 20)
-    //     .attr("height", h);
     var svg = d3.select("#canvas")
         .attr("width", w)
         .attr("height", h);
@@ -81,8 +48,7 @@ var bars = function(data) {
         })
         .attr("title", function(d) {
             return d.operator + ", " + d.fatalities + " (" + d.year.getFullYear() + ")";
-        })
-        .call(drag);
+        });
 };
 
 function init() {
@@ -99,15 +65,12 @@ var savedGraph = [];
 
 function visualizeNodeGraph(data) {
     var svg = d3.select("#canvas")
-        .attr("width", w)
-        .attr("height", h);
+        .attr("width", w + margin.left + margin.right)
+        .attr("height", h + margin.top + margin.bottom);
     node = svg.selectAll("circle")
         .data(data)
         .enter()
         .append("circle")
-        .filter(function(d) {
-            return d.fatalities > 100;
-        })
         .attr("class", "node")
         .attr("cx", function(d) {
             var posX = Math.floor((Math.random() * w) + 1);
@@ -120,28 +83,39 @@ function visualizeNodeGraph(data) {
             return d.y = posY;
         })
         .attr("r", function(d) {
-            return d.fatalities / 5;
+            return d.fatalities / 2;
         })
         .attr("title", function(d) {
             return d.operator + ", " + d.fatalities + " (" + d.year.getFullYear() + ")";
         })
-        .attr("transform", function(d) {
-            return "translate(" + d.x + "," + d.y + ")";
-        })
+        .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
         .call(drag);
 
-    for (var i in node[0]) {
-        var tempNode = {
-            "x": node[0][i].getAttribute('cx'),
-            "y": node[0][i].getAttribute('cy'),
-            "r": node[0][i].getAttribute('r'),
-            "title": node[0][i].getAttribute("title")
-        };
-        savedGraph.push(tempNode);
-    };
+    // for (var i in node[0]) {
+    //     var tempNode = {
+    //         "x": node[0][i].getAttribute('cx'),
+    //         "y": node[0][i].getAttribute('cy'),
+    //         "r": node[0][i].getAttribute('r'),
+    //         "title": node[0][i].getAttribute("title")
+    //     };
+    //     savedGraph.push(tempNode);
+    // };
+    saveGraph(node);
     window.localStorage.setItem("positions", JSON.stringify(savedGraph));
     console.log(localStorage.getItem("positions"));
-    console.log(JSON.stringify(savedGraph));
+    // console.log(JSON.stringify(savedGraph));
+};
+
+function saveGraph(nodes) {
+    for (var i in nodes[0]) {
+        var tempNode = {
+            "x": nodes[0][i].getAttribute('cx'),
+            "y": nodes[0][i].getAttribute('cy'),
+            "r": nodes[0][i].getAttribute('r'),
+            "title": nodes[0][i].getAttribute("title")
+        };
+        savedGraph.push(tempNode);
+    }
 };
 
 function savePos(d) {
