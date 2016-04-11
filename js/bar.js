@@ -7,6 +7,9 @@ var barPadding = 1;
 var timer = 5000;
 
 var progress = [];
+
+var timeout = null;
+
 var drag = d3.behavior.drag()
     .origin(function(d) {
         return d;
@@ -18,6 +21,9 @@ var drag = d3.behavior.drag()
 function dragstarted(d) {
     d3.event.sourceEvent.stopPropagation();
     d3.select(this).classed("dragging", true);
+    if (timeout != null) {
+        window.clearTimeout(timeout);
+    }
 }
 
 function dragged(d) {
@@ -28,7 +34,7 @@ function dragended(d) {
     d3.select(this).classed("dragging", false);
     if ($("#automatic-progress").is(":checked")) {
         // saveState();
-        window.setTimeout(saveState, timer);
+        timeout = window.setTimeout(saveState, timer);
     }
     // var svg = d3.select("#canvas");
     // node = svg.selectAll("circle");
