@@ -1,8 +1,11 @@
 var margin = { top: -5, right: -5, bottom: -5, left: -5 };
-var w = 1500 - margin.left - margin.right;
+var w = 1400 - margin.left - margin.right;
 var h = 900 - margin.top - margin.bottom;
+var progressW = 350;
+var progressH = 900;
 var barPadding = 1;
 
+var progress = [];
 var drag = d3.behavior.drag()
     .origin(function(d) {
         return d;
@@ -22,7 +25,41 @@ function dragged(d) {
 
 function dragended(d) {
     d3.select(this).classed("dragging", false);
+    if ($("#automatic-progress").is(":checked")) {
+        saveState();
+    }
+    // var svg = d3.select("#canvas");
+    // node = svg.selectAll("circle");
+    // progress.push(node);
+    // progressView(progress);
+    // console.log(progress);
 }
+
+function saveState() {
+    var svg = d3.select("#canvas");
+    node = svg.selectAll("circle");
+    var savedNode = [{}];
+    // console.log(node[0][0]);
+    // console.log(node[0][1]);
+    // console.log(node[0][2]);
+    for (i = 0; i < node[0].length; i ++) {
+        savedNode.push({
+            "x": node[0][i].getAttribute('cx'),
+            "y": node[0][i].getAttribute('cy'),
+            "r": node[0][i].getAttribute("r"),
+            "title": node[0][i].getAttribute("title")
+        })
+    }
+    // console.log(node[0][0].getAttribute('cx'));
+    progress.push(savedNode);
+    d3.select("#progress").selectAll("*").remove();
+    progressView(progress);
+    console.log(progress);
+    // for (var i in progress) {
+    //     document.getElementById("state-" + i).addEventListener("click", testClick(i));
+    // }
+}
+
 
 var bars = function(data) {
     var svg = d3.select("#canvas")
@@ -63,6 +100,37 @@ function init() {
 };
 var savedGraph = [];
 
+function progressView(data) {
+    var svg = d3.select("#progress")
+        .attr("width", progressW)
+        .attr("height", progressH)
+        .attr("border", 1);
+    var borderPath = svg.append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("height", progressH)
+        .attr("width", progressW)
+        .style("stroke", 'gray')
+        .style("fill", "none")
+        .style("stroke-width", 3);
+    progressNode = svg.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("id", function(d, i) {
+            return i;
+        })
+        .attr("cx", 40)
+        .attr("cy", function(d, i) {
+            return progressH - (i * 30) - 20;
+        })
+        .attr("r", 10);
+    $("#progress > circle").click(function() {
+        var index = $(this).attr("id");
+        loadSavedState(progress[index]);
+    });
+}
+
 function visualizeNodeGraph(data) {
     var svg = d3.select("#canvas")
         .attr("width", w + margin.left + margin.right)
@@ -90,37 +158,32 @@ function visualizeNodeGraph(data) {
         })
         .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
         .call(drag);
-
-    // for (var i in node[0]) {
-    //     var tempNode = {
-    //         "x": node[0][i].getAttribute('cx'),
-    //         "y": node[0][i].getAttribute('cy'),
-    //         "r": node[0][i].getAttribute('r'),
-    //         "title": node[0][i].getAttribute("title")
-    //     };
-    //     savedGraph.push(tempNode);
-    // };
-    saveGraph(node);
-    window.localStorage.setItem("positions", JSON.stringify(savedGraph));
-    console.log(localStorage.getItem("positions"));
-    // console.log(JSON.stringify(savedGraph));
+    progress.push(node);
+    progressView(progress);
 };
 
-function saveGraph(nodes) {
-    for (var i in nodes[0]) {
-        var tempNode = {
-            "x": nodes[0][i].getAttribute('cx'),
-            "y": nodes[0][i].getAttribute('cy'),
-            "r": nodes[0][i].getAttribute('r'),
-            "title": nodes[0][i].getAttribute("title")
-        };
-        savedGraph.push(tempNode);
-    }
-};
+function loadSavedState(state) {
+    // console.log(state);
+    d3.select("#canvas").selectAll("*").remove();
+    var svg = d3.select("#canvas");
+    node = svg.selectAll("circle")
+        .data(state)
+        .enter()
+        .append("circle")
+        .attr("class", "node")
+        .attr("cx", function(d) {
+            return d.x;
+        })
+        .attr("cy", function(d) {
+            return d.y;
+        })
+        .attr("r", function(d) {
+            return d.r;
+        })
+        .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
+        .call(drag);
+}
 
-function savePos(d) {
-    console.log(d.x + "," + d.y);
-};
 // function nodeConstructor(svg, data, x, y) {
 //     svg.selectAll("circle")
 //         .data(data)

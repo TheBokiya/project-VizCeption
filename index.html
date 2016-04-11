@@ -7,6 +7,7 @@
     <script type="text/javascript" src="js/d3.min.js"></script>
     <script type="text/javascript" src="js/bar.js"></script>
     <script type="text/javascript" src="js/csv.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 
@@ -14,22 +15,28 @@
     <div class="menu">
         <button id="bar-graph" value="Bar Graph">Bar Graph</button>
         <button id="node-graph" value="Node Graph">Node Graph</button>
+        <button id="save-state" value="Save State">Save State</button>
+        <input id="automatic-progress" type="checkbox" name="automatic">Automatically record state after every drag</input>
     </div>
     <svg id="canvas"></svg>
     <svg id="progress"></svg>
     <script type="text/javascript">
+    $('#automatic-progress').prop('checked', false);
     d3.select("#bar-graph").on("click", function(d, i) {
         d3.select("#canvas").selectAll("*").remove();
         dataset_csv();
     });
 
     d3.select("#node-graph").on("click", function(d, i) {
-            d3.select("#canvas").selectAll("*").remove();
-            nodeGraph();
-        })
-        // init();
+        d3.select("#canvas").selectAll("*").remove();
+        nodeGraph();
+    });
+
+    d3.select("#save-state").on("click", function(d, i) {
+        saveState();
+    });
+    // init();
     </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 </body>
 
 </html>
