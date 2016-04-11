@@ -38,3 +38,9 @@ circle:hover {
     opacity: 0.8;
 }
 
+.progress-node {
+    fill: #2980b9;
+    stroke: #2c3e50;
+    stroke-width: 2px;
+}
+

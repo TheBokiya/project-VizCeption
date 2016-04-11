@@ -4,6 +4,7 @@ var h = 900 - margin.top - margin.bottom;
 var progressW = 350;
 var progressH = 900;
 var barPadding = 1;
+var timer = 5000;
 
 var progress = [];
 var drag = d3.behavior.drag()
@@ -26,7 +27,8 @@ function dragged(d) {
 function dragended(d) {
     d3.select(this).classed("dragging", false);
     if ($("#automatic-progress").is(":checked")) {
-        saveState();
+        // saveState();
+        window.setTimeout(saveState, timer);
     }
     // var svg = d3.select("#canvas");
     // node = svg.selectAll("circle");
@@ -117,6 +119,7 @@ function progressView(data) {
         .data(data)
         .enter()
         .append("circle")
+        .attr("class", "progress-node")
         .attr("id", function(d, i) {
             return i;
         })
@@ -151,7 +154,7 @@ function visualizeNodeGraph(data) {
             return d.y = posY;
         })
         .attr("r", function(d) {
-            return d.fatalities / 2;
+            return d.fatalities / 10;
         })
         .attr("title", function(d) {
             return d.operator + ", " + d.fatalities + " (" + d.year.getFullYear() + ")";
@@ -179,6 +182,9 @@ function loadSavedState(state) {
         })
         .attr("r", function(d) {
             return d.r;
+        })
+        .attr("title", function(d){
+            return d.title;
         })
         .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
         .call(drag);
