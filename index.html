@@ -8,6 +8,7 @@
     <script type="text/javascript" src="js/bar.js"></script>
     <script type="text/javascript" src="js/csv.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.tooltipster.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 
@@ -37,6 +38,9 @@
 
     d3.select("#save-state").on("click", function(d, i) {
         saveState();
+    });
+    $(document).ready(function() {
+        $('.tooltip').tooltipster();
     });
     // init();
     </script>

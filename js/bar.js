@@ -7,6 +7,7 @@ var barPadding = 1;
 var timer = 5000;
 
 var progress = [];
+var progressNodeMetaData = [];
 
 var timeout = null;
 
@@ -51,9 +52,6 @@ function saveState() {
     var svg = d3.select("#canvas");
     node = svg.selectAll("circle");
     var savedNode = [{}];
-    // console.log(node[0][0]);
-    // console.log(node[0][1]);
-    // console.log(node[0][2]);
     for (i = 0; i < node[0].length; i++) {
         savedNode.push({
             "x": node[0][i].getAttribute('cx'),
@@ -65,7 +63,7 @@ function saveState() {
     // console.log(node[0][0].getAttribute('cx'));
     progress.push(savedNode);
     d3.select("#progress").selectAll("*").remove();
-    progressView(progress);
+    progressView(progressNodeMetaData);
     console.log(progress);
     // for (var i in progress) {
     //     document.getElementById("state-" + i).addEventListener("click", testClick(i));
@@ -102,6 +100,11 @@ function saveState() {
 var savedGraph = [];
 
 function progressView(data) {
+    var statePosX = 40;
+    var statePosY = progressH - (progressNodeMetaData.length * 30) - 20;
+
+    progressNodeMetaData.push({ "x": statePosX, "y": statePosY });
+
     var svg = d3.select("#progress")
         .attr("width", progressW)
         .attr("height", progressH)
@@ -123,23 +126,44 @@ function progressView(data) {
         .attr("font-family", "sans-serif")
         .attr("font-size", 20)
         .attr("fill", "gray");
+    if (progressNodeMetaData.length > 1)
+        connectProgressNode(progressNodeMetaData);
     progressNode = svg.selectAll("circle")
         .data(data)
         .enter()
         .append("circle")
-        .attr("class", "progress-node")
+        .attr("class", "progress-node tooltip")
         .attr("id", function(d, i) {
             return i;
         })
-        .attr("cx", 40)
-        .attr("cy", function(d, i) {
-            return progressH - (i * 30) - 20;
+        .attr("cx", function(d) {
+            return d.x;
         })
-        .attr("r", 10);
+        .attr("cy", function(d) {
+            return d.y;
+        })
+        .attr("r", 11)
+        .attr("title", function() {
+            return "State " + (Number(this.id)+1);
+        });
     $("#progress > circle").click(function() {
         var index = $(this).attr("id");
         loadSavedState(progress[index]);
     });
+}
+
+function connectProgressNode(data) {
+    var svg = d3.select("#progress");
+    console.log(data);
+    for (i = 0; i < data.length - 1; i++) {
+        svg.append("line")
+            .style("stroke", "#95a5a6")
+            .style("stroke-width", 2)
+            .attr("x1", data[i].x)
+            .attr("y1", data[i].y)
+            .attr("x2", data[i + 1].x)
+            .attr("y2", data[i + 1].y);
+    }
 }
 
 function visualizeNodeGraph(data) {
@@ -150,7 +174,7 @@ function visualizeNodeGraph(data) {
         .data(data)
         .enter()
         .append("circle")
-        .attr("class", "node")
+        .attr("class", "node tooltip")
         .attr("cx", function(d) {
             var posX = Math.floor((Math.random() * w) + 1);
             // var posX = +d.year.getFullYear();
@@ -173,7 +197,7 @@ function visualizeNodeGraph(data) {
 };
 
 function loadSavedState(state) {
-    // console.log(state);
+    console.log(state);
     d3.select("#canvas").selectAll("*").remove();
     var svg = d3.select("#canvas");
     node = svg.selectAll("circle")
