@@ -43,6 +43,10 @@ function dragended(d) {
     // console.log(progress);
 }
 
+// var canvasSvg = d3.select("#canvas")
+//     .attr("width", w + margin.left + margin.right)
+//     .attr("height", h + margin.top + margin.bottom);
+
 function saveState() {
     var svg = d3.select("#canvas");
     node = svg.selectAll("circle");
@@ -50,7 +54,7 @@ function saveState() {
     // console.log(node[0][0]);
     // console.log(node[0][1]);
     // console.log(node[0][2]);
-    for (i = 0; i < node[0].length; i ++) {
+    for (i = 0; i < node[0].length; i++) {
         savedNode.push({
             "x": node[0][i].getAttribute('cx'),
             "y": node[0][i].getAttribute('cy'),
@@ -69,43 +73,32 @@ function saveState() {
 }
 
 
-var bars = function(data) {
-    var svg = d3.select("#canvas")
-        .attr("width", w)
-        .attr("height", h);
-    svg.selectAll("rect")
-        .data(data)
-        .enter()
-        .append("rect")
-        // .filter(function(d){
-        //  return d.operator == "Air Canada";
-        // })
-        .attr("class", "bar")
-        .attr("x", function(d, i) {
-            return i * (w / data.length);
-        })
-        .attr("y", function(d) {
-            return h - (d.fatalities);
-        })
-        .attr("width", 3)
-        .attr("height", function(d) {
-            return d.fatalities;
-        })
-        .attr("title", function(d) {
-            return d.operator + ", " + d.fatalities + " (" + d.year.getFullYear() + ")";
-        });
-};
-
-function init() {
-    var svg = d3.select("#canvas")
-        .attr("width", w + 100)
-        .attr("height", h + 100);
-    svg.append("svg:rect")
-        .attr("width", "100%")
-        .attr("height", "100%")
-        .attr("stroke", "#000")
-        .attr("fill", "none");
-};
+// var bars = function(data) {
+//     var svg = d3.select("#canvas")
+//         .attr("width", w)
+//         .attr("height", h);
+//     svg.selectAll("rect")
+//         .data(data)
+//         .enter()
+//         .append("rect")
+//         // .filter(function(d){
+//         //  return d.operator == "Air Canada";
+//         // })
+//         .attr("class", "bar")
+//         .attr("x", function(d, i) {
+//             return i * (w / data.length);
+//         })
+//         .attr("y", function(d) {
+//             return h - (d.fatalities);
+//         })
+//         .attr("width", 3)
+//         .attr("height", function(d) {
+//             return d.fatalities;
+//         })
+//         .attr("title", function(d) {
+//             return d.operator + ", " + d.fatalities + " (" + d.year.getFullYear() + ")";
+//         });
+// };
 var savedGraph = [];
 
 function progressView(data) {
@@ -121,6 +114,15 @@ function progressView(data) {
         .style("stroke", 'gray')
         .style("fill", "none")
         .style("stroke-width", 3);
+    svg.append("text")
+        .attr("x", function(d) {
+            return (progressW / 2) - 60;
+        })
+        .attr("y", 40)
+        .text("Progress View")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", 20)
+        .attr("fill", "gray");
     progressNode = svg.selectAll("circle")
         .data(data)
         .enter()
@@ -160,15 +162,14 @@ function visualizeNodeGraph(data) {
             return d.y = posY;
         })
         .attr("r", function(d) {
-            return d.fatalities / 10;
+            return d.fatalities / 4;
         })
         .attr("title", function(d) {
             return d.operator + ", " + d.fatalities + " (" + d.year.getFullYear() + ")";
         })
         .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
         .call(drag);
-    progress.push(node);
-    progressView(progress);
+    saveState();
 };
 
 function loadSavedState(state) {
@@ -189,7 +190,7 @@ function loadSavedState(state) {
         .attr("r", function(d) {
             return d.r;
         })
-        .attr("title", function(d){
+        .attr("title", function(d) {
             return d.title;
         })
         .attr("transform", "translate(" + margin.left + "," + margin.right + ")")

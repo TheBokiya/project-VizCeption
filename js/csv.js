@@ -15,7 +15,7 @@
     };
 
     function nodeGraph() {
-        d3.csv("dataset-new.csv", function(data) {
+        d3.csv("dataset-2000.csv", function(data) {
             dataset = data.map(function(d) {
                 operator = d.Operator;
                 year = new Date(+d.Year, 0, 1);
