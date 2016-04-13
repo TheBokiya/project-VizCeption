@@ -8,6 +8,7 @@ var timer = 5000;
 
 var progress = [];
 var progressNodeMetaData = [];
+var currentStatePos = { "x": 40, "y": progressH - 50 };
 
 var timeout = null;
 
@@ -37,16 +38,14 @@ function dragended(d) {
         // saveState();
         timeout = window.setTimeout(saveState, timer);
     }
-    // var svg = d3.select("#canvas");
-    // node = svg.selectAll("circle");
-    // progress.push(node);
-    // progressView(progress);
-    // console.log(progress);
 }
 
-// var canvasSvg = d3.select("#canvas")
-//     .attr("width", w + margin.left + margin.right)
-//     .attr("height", h + margin.top + margin.bottom);
+function newBranch() {
+    currentStatePos.x += 40;
+    progressNodeMetaData.push({ "x": currentStatePos.x, "y": currentStatePos.y - 20, "type": "branch" });
+    d3.select("#progress").selectAll("*").remove();
+    progressView(progressNodeMetaData);
+}
 
 function saveState() {
     var svg = d3.select("#canvas");
@@ -62,9 +61,12 @@ function saveState() {
     }
     // console.log(node[0][0].getAttribute('cx'));
     progress.push(savedNode);
+    currentStatePos.y -= 40;
+    progressNodeMetaData.push({ "x": currentStatePos.x, "y": currentStatePos.y, "type": "state" });
     d3.select("#progress").selectAll("*").remove();
     progressView(progressNodeMetaData);
-    console.log(progress);
+
+    console.log(progressNodeMetaData);
     // for (var i in progress) {
     //     document.getElementById("state-" + i).addEventListener("click", testClick(i));
     // }
@@ -100,10 +102,9 @@ function saveState() {
 var savedGraph = [];
 
 function progressView(data) {
-    var statePosX = 40;
-    var statePosY = progressH - (progressNodeMetaData.length * 30) - 20;
+    // currentStatePos.y -= 40;
 
-    progressNodeMetaData.push({ "x": statePosX, "y": statePosY });
+    // progressNodeMetaData.push({ "x": currentStatePos.x, "y": currentStatePos.y, "type": "state" });
 
     var svg = d3.select("#progress")
         .attr("width", progressW)
@@ -132,7 +133,12 @@ function progressView(data) {
         .data(data)
         .enter()
         .append("circle")
-        .attr("class", "progress-node tooltip")
+        .attr("class", function(d) {
+            if (d.type === "state")
+                return "progress-node";
+            else
+                return "branch-node";
+        })
         .attr("id", function(d, i) {
             return i;
         })
@@ -142,11 +148,19 @@ function progressView(data) {
         .attr("cy", function(d) {
             return d.y;
         })
-        .attr("r", 11)
-        .attr("title", function() {
-            return "State " + (Number(this.id)+1);
+        .attr("r", function(d) {
+            if (d.type === "state")
+                return 11;
+            else
+                return 5;
+        })
+        .attr("title", function(d) {
+            if (d.type === "state")
+                return "State " + (Number(this.id) + 1);
+            else
+                return "New Branch";
         });
-    $("#progress > circle").click(function() {
+    $("#progress > circle.progress-node").click(function() {
         var index = $(this).attr("id");
         loadSavedState(progress[index]);
     });
@@ -154,7 +168,7 @@ function progressView(data) {
 
 function connectProgressNode(data) {
     var svg = d3.select("#progress");
-    console.log(data);
+    // console.log(data);
     for (i = 0; i < data.length - 1; i++) {
         svg.append("line")
             .style("stroke", "#95a5a6")

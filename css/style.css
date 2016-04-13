@@ -33,11 +33,11 @@ circle.node {
     transition: opacity 0.25s ease-in-out;
 }
 
-circle.node:hover{
+circle.node:hover {
     opacity: 1;
 }
 
-circle:hover {
+circle:hover:not(.branch-node) {
     cursor: pointer;
 }
 
@@ -52,6 +52,12 @@ circle:hover {
     transition: stroke-width 0.25s ease-in-out;
 }
 
-.progress-node:hover{
+.progress-node:hover {
     stroke-width: 3px;
+}
+
+.branch-node {
+    fill: #8e44ad;
+    stroke: #95a5a6;
+    stroke-width: 1px;
 }
