@@ -52,8 +52,19 @@ circle:hover:not(.branch-node) {
     transition: stroke-width 0.25s ease-in-out;
 }
 
-.progress-node:hover {
+.progress-node:hover, .selected-state:hover {
     stroke-width: 3px;
+}
+
+.selected-state {
+    fill: #16a085;
+    stroke: #95a5a6;
+    stroke-width: 1px;
+    -webkit-transition: stroke-width 0.25s ease-in-out;
+    -moz-transition: stroke-width 0.25s ease-in-out;
+    -ms-transition: stroke-width 0.25s ease-in-out;
+    -o-transition: stroke-width 0.25s ease-in-out;
+    transition: stroke-width 0.25s ease-in-out;
 }
 
 .branch-node {
