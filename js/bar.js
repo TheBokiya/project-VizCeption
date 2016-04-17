@@ -72,15 +72,20 @@ function saveState() {
     });
     d3.select("#progress").selectAll("*").remove();
     progressView(progressNodeMetaData);
-
+    historyView(progressNodeMetaData);
     console.log(progressNodeMetaData);
     // for (var i in progress) {
     //     document.getElementById("state-" + i).addEventListener("click", testClick(i));
     // }
 }
 
-function historyView(data){
-    $('body').append('<div class="history-view"></div');
+function historyView(data) {
+    $('select#history-list').empty();
+    for (var i = 0; i < data.length; i++) {
+        if (data[i].type === 'state') {
+            $('select#history-list').append('<option value="' + data[i].id + '">state-' + data[i].id + '</option')
+        }
+    }
 }
 
 function progressView(data) {
@@ -124,7 +129,7 @@ function progressView(data) {
         .attr("id", function(d, i) {
             if (d.type === "state")
                 return d.id;
-            else 
+            else
                 return "branch-" + i;
         })
         .attr("cx", function(d) {
@@ -149,7 +154,7 @@ function progressView(data) {
         var index = $(this).attr("id");
         $('.selected-state').removeClass('selected-state');
         $(this).addClass('selected-state');
-        loadSavedState(progress[index-1]);
+        loadSavedState(progress[index - 1]);
     });
 }
 

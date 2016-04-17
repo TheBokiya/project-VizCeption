@@ -7,6 +7,22 @@ svg#progress {
     height: 900px;
 }
 
+div#history-view {
+    vertical-align: top;
+    width: 350px;
+    height: 900px;
+    display: inline-block;
+    border-color: black;
+    border-width: 1px;
+    font-size: 20px;
+    font-family: sans-serif;
+    color: gray;
+}
+
+#history-list {
+    min-width: 200px;
+}
+
 rect.bar {
     fill: #1abc9c;
     opacity: 0.5;
@@ -52,7 +68,8 @@ circle:hover:not(.branch-node) {
     transition: stroke-width 0.25s ease-in-out;
 }
 
-.progress-node:hover, .selected-state:hover {
+.progress-node:hover,
+.selected-state:hover {
     stroke-width: 3px;
 }
 
