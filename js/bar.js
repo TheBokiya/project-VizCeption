@@ -79,6 +79,10 @@ function saveState() {
     // }
 }
 
+function historyView(data){
+    $('body').append('<div class="history-view"></div');
+}
+
 function progressView(data) {
     // currentStatePos.y -= 40;
 
